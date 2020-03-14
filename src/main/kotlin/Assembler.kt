@@ -7,7 +7,8 @@ data class SourceLine(
     companion object {
         fun toSourceLine(line: String): SourceLine {
             val label = getLabel(line)
-            val mnemonic =  getMnemonic(line)
+            val containsLabel = label.isNotEmpty()
+            val mnemonic =  getMnemonic(line, containsLabel)
             
             val operands = ""
             val comment = ""
@@ -17,11 +18,11 @@ data class SourceLine(
         private fun getLabel(line: String) =
             line.substringBefore(':').let { candidate ->
                 if (candidate.isEmpty()) throw IllegalArgumentException()
-                if (candidate.length == line.length) "" else candidate
-        }
+                if (candidate.length == line.length) "" else candidate 
+            }
         
-        private fun getMnemonic(line: String) =
-            if (line.contains(':')) line.split(": ".toRegex())[1].split(" ").first()
+        private fun getMnemonic(line: String, containsLabel: Boolean) =
+            if (containsLabel) line.split(" ")[1]
             else line.split(" ").first()
     }
 }
