@@ -6,16 +6,23 @@ data class SourceLine(
     val comment: String) {
     companion object {
         fun toSourceLine(line: String): SourceLine {
-            val label = line.substringBefore(':').let { candidate ->
-                if (candidate.isEmpty()) throw IllegalArgumentException()
-                if (candidate.length == line.length) "" else candidate
-            }
+            val label = getLabel(line)
+            val containsLabel = label.isNotEmpty()
+            val mnemonic =  getMnemonic(line, containsLabel)
             
-            val mnemonic = ""
             val operands = ""
             val comment = ""
             return SourceLine(label, mnemonic, operands, comment)
         }
 
+        private fun getLabel(line: String) =
+            line.substringBefore(':').let { candidate ->
+                if (candidate.isEmpty()) throw IllegalArgumentException()
+                if (candidate.length == line.length) "" else candidate 
+            }
+        
+        private fun getMnemonic(line: String, containsLabel: Boolean) =
+            if (containsLabel) line.split(" ")[1]
+            else line.split(" ").first()
     }
 }
